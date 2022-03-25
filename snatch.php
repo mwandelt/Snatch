@@ -40,7 +40,8 @@ if ( ! empty( $data ) ){
 		foreach ( range( 1, 6 ) as $i ){
 			$code .= $characters[ rand( 0, strlen( $characters ) - 1 ) ];
 		}
-		if ( @mkdir( "{$tmp}/snatch_{$code}" ) ){
+		$hash = hash( 'sha256', $code );
+		if ( @mkdir( "{$tmp}/snatch/{$hash}", 0700, TRUE ) ){
 			break;
 		}
 	} while ( TRUE );
@@ -53,8 +54,11 @@ if ( ! empty( $data ) ){
 
 ### Handle GET request ###
 
-if ( ! empty( $_SERVER['QUERY_STRING'] ) ){
-	$file = "{$tmp}/snatch_{$_SERVER['QUERY_STRING']}/data";
+$code = $_SERVER['QUERY_STRING'] ?? '';
+
+if ( ! empty( $code ) ){
+	$hash = hash( 'sha256', $code );
+	$file = "{$tmp}/snatch/{$hash}/data";
 
 	if ( ! file_exists( $file ) ){
 		header('HTTP/1.1 404 Not Found');
