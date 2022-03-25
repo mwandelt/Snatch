@@ -2,7 +2,7 @@
 
 When installed on a web server the snatch.php script stores data sent to it for 
 a short period of time and returns a random code for retrieving it later on.
-It may be used as backend for mobile apps that want to transfer settings, keys etc. 
+It may be used as a backend for mobile apps that need to transfer settings, keys etc. 
 from one device to another.
 
 The data may only be retrieved once and will be deleted automatically after
@@ -40,5 +40,6 @@ The script returns the following status codes:
 
 - `200 OK` on successful retrieval
 - `201 Accepted`on successful storage
+- `400 Bad Request` when calling the script without POST or GET data
 - `404 Not Found` when the retrieval code could not be found
 - `410 Gone` when the retrieval code has expired
