@@ -83,5 +83,5 @@ if ( ! empty( $code ) ){
 header('HTTP/1.1 400 Bad Request');
 die('400 Bad Request');
 
-// end of file glimpse.php
+// end of file snatch.php
 
