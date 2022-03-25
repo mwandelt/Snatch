@@ -38,7 +38,7 @@ if ( ! empty( $data ) ){
 	do {
 		$code = '';
 		foreach ( range( 1, 6 ) as $i ){
-			$code .= $characters[ rand( 0, strlen( $characters ) ) ];
+			$code .= $characters[ rand( 0, strlen( $characters ) - 1 ) ];
 		}
 		if ( @mkdir( "{$tmp}/snatch_{$code}" ) ){
 			break;
