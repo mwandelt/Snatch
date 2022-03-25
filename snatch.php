@@ -46,7 +46,11 @@ if ( ! empty( $data ) ){
 		}
 	} while ( TRUE );
 
-	file_put_contents( "{$tmp}/snatch_{$code}/data", $data );
+	$iv = openssl_random_pseudo_bytes( 16 );
+	$encrypted = openssl_encrypt( $data, 'aes-256-ctr', $code, 0, $iv );
+	$content = base64_encode( $iv ) . ':' . $encrypted;
+	file_put_contents( "{$tmp}/snatch/{$hash}/data", $content );
+	chmod( "{$tmp}/snatch/{$hash}/data", 0700 );
 	header('HTTP/1.1 201 Accepted');
 	echo $code;
 	exit;
@@ -66,15 +70,17 @@ if ( ! empty( $code ) ){
 	}
 
 	if ( time() - filemtime( $file ) > $expirationTime ){
-		unlink( $file );
-		rmdir( dirname( $file ) );
 		header('HTTP/1.1 410 Gone');
-		die('410 Gone');
+		$data = '';
 	}
-
-	readfile( $file );
+	else {
+		list ( $iv, $encrypted ) = explode( ':', file_get_contents( $file ) );
+		$iv = base64_decode( $iv );
+		$data = openssl_decrypt( $encrypted, 'aes-256-ctr', $code, 0, $iv );
+	}
 	unlink( $file );
 	rmdir( dirname( $file ) );
+	echo $data;
 	exit;
 }
 
