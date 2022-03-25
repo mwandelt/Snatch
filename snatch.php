@@ -26,6 +26,7 @@
 // SOFTWARE.
 
 $expirationTime = 300; // seconds
+$characters = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 $tmp = sys_get_temp_dir();
 header('Content-Type: text/plain');
 
@@ -35,7 +36,6 @@ $data = file_get_contents('php://input');
 
 if ( ! empty( $data ) ){
 	do {
-		$characters = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 		$code = '';
 		foreach ( range( 1, 6 ) as $i ){
 			$code .= $characters[ rand( 0, strlen( $characters ) ) ];
