@@ -33,6 +33,11 @@ https://myserver.tld/snatch.php?d7JKx2
 If the code is correct and has not expired, the script returns the stored data
 and deletes it immediately from the server.
 
+The script provides a simple mechanism for protecting against brute-force
+attacks. If a request fails due to an incorrect code, the client's IP address
+is blocked for 10 seconds; if another attempt fails, it is blocked for 20
+seconds etc.
+
 
 ## HTTP status codes
 
@@ -41,5 +46,6 @@ The script returns the following status codes:
 - `200 OK` on successful retrieval
 - `201 Accepted`on successful storage
 - `400 Bad Request` when calling the script without POST or GET data
+- `403 Forbidden` when IP is temporarily blocked due to failed retrieval attempts
 - `404 Not Found` when the retrieval code could not be found
 - `410 Gone` when the retrieval code has expired

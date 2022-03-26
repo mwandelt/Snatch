@@ -29,6 +29,20 @@ $expirationTime = 300; // seconds
 $characters = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 $tmp = sys_get_temp_dir();
 header('Content-Type: text/plain');
+$delayPerFailedAttempt = 10; // seconds
+
+if ( ! file_exists( "{$tmp}/snatch_remotes" ) ){
+	mkdir( "{$tmp}/snatch_remotes" );
+}
+
+### Do some clean-up
+
+$listing = glob( "{$tmp}/snatch_remotes/*" );
+foreach ( $listing as $item ){
+	if ( time() - filemtime( $item ) > $delayPerFailedAttempt * filesize( $item ) ){
+		unlink( $item );
+	}
+}
 
 ### Handle POST request ###
 
@@ -61,10 +75,28 @@ if ( ! empty( $data ) ){
 $code = $_SERVER['QUERY_STRING'] ?? '';
 
 if ( ! empty( $code ) ){
+
+	// Check for brute force attack
+	$ip = $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR'] ?? NULL;
+	if ( ! $ip ){
+		header('HTTP/1.1 403 Forbidden');
+		die('403 Forbidden (missing remote IP address)');
+	}
+	$ipFile = "{$tmp}/snatch_remotes/" . md5( $ip );
+	$failedAttempts = file_exists( $ipFile ) ? filesize( $ipFile ) : 0;
+	if ( $failedAttempts
+		&& time() - filemtime( $ipFile ) < $delayPerFailedAttempt * $failedAttempts
+	){
+		header('HTTP/1.1 403 Forbidden');
+		die('403 Forbidden (IP temporarily blocked due to failed attempts)');
+	}
+
+	// Handle request
 	$hash = hash( 'sha256', $code );
 	$dataFile = "{$tmp}/snatch/{$hash}/data";
 
 	if ( ! file_exists( $dataFile ) ){
+		file_put_contents( $ipFile, 'x', FILE_APPEND );
 		header('HTTP/1.1 404 Not Found');
 		die('404 Not Found');
 	}
