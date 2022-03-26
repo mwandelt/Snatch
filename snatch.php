@@ -62,24 +62,24 @@ $code = $_SERVER['QUERY_STRING'] ?? '';
 
 if ( ! empty( $code ) ){
 	$hash = hash( 'sha256', $code );
-	$file = "{$tmp}/snatch/{$hash}/data";
+	$dataFile = "{$tmp}/snatch/{$hash}/data";
 
-	if ( ! file_exists( $file ) ){
+	if ( ! file_exists( $dataFile ) ){
 		header('HTTP/1.1 404 Not Found');
 		die('404 Not Found');
 	}
 
-	if ( time() - filemtime( $file ) > $expirationTime ){
+	if ( time() - filemtime( $dataFile ) > $expirationTime ){
 		header('HTTP/1.1 410 Gone');
 		$data = '';
 	}
 	else {
-		list ( $iv, $encrypted ) = explode( ':', file_get_contents( $file ) );
+		list ( $iv, $encrypted ) = explode( ':', file_get_contents( $dataFile ) );
 		$iv = base64_decode( $iv );
 		$data = openssl_decrypt( $encrypted, 'aes-256-ctr', $code, 0, $iv );
 	}
-	unlink( $file );
-	rmdir( dirname( $file ) );
+	unlink( $dataFile );
+	rmdir( dirname( $dataFile ) );
 	echo $data;
 	exit;
 }
