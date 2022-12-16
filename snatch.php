@@ -77,7 +77,8 @@ $code = $_SERVER['QUERY_STRING'] ?? '';
 if ( ! empty( $code ) ){
 
 	// Check for brute force attack
-	$ip = $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR'] ?? NULL;
+	$ip = $_SERVER['HTTP_CLIENT_IP'] ?? $_SERVER['HTTP_X_FORWARDED_FOR']
+		?? $_SERVER['REMOTE_ADDR'] ?? NULL;
 	if ( ! $ip ){
 		header('HTTP/1.1 403 Forbidden');
 		die('403 Forbidden (missing remote IP address)');
