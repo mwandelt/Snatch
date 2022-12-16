@@ -5,7 +5,7 @@
 // Stores data sent via HTTP-POST for a short period of time and makes it
 // retrievable via random HTTP-GET URL.
 //
-// Copyright (c) 2021 Martin Wandelt
+// Copyright (c) 2021-22 Martin Wandelt
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
