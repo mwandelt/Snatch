@@ -112,6 +112,9 @@ if ( ! empty( $code ) ){
 	}
 	unlink( $dataFile );
 	rmdir( dirname( $dataFile ) );
+	if ( $failedAttempts ){
+		unlink( $ipFile );
+	}
 	echo $data;
 	exit;
 }
